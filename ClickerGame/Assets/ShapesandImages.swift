@@ -11,43 +11,42 @@ import SwiftUI
 
 struct globalVariables {
     static var breakState: Int = 0
-    static var breakPNG: String? = "breakblock1"
+    static var breakPNG: String = ""
 }
 
-struct GoldBlock: View {
+struct GoldBlock: View {                                                                            // Draws the gold block, sets image and offset
     var body: some View {
             Image("gold")
                 .offset(x: -50, y: 150)
             }
 }
 
-struct pickaxeImage: View {
+struct pickaxeImage: View {                                                                         // Draws the pickaxe
     @State var rotation : Double = 0
     var body: some View {
         Image("pickaxe")
-            .resizable()
-            .scaledToFit()
-            .frame(width:120, height: 120)
-            .offset(x:40, y:-120)
-            .rotationEffect(.degrees(rotation), anchor: .topTrailing)
-            .animation(.interpolatingSpring(stiffness: 5, damping: 10, initialVelocity: 10))
-            .onTapGesture (count:1){
-                self.rotation -= 22
-                let seconds = 0.1
-                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-                self.rotation += 22
+            .resizable()                                                                            // Makes image resizable
+            .scaledToFit()                                                                          // Makes image scale
+            .frame(width:120, height: 120)                                                          // Sets image frame
+            .offset(x:40, y:-120)                                                                   // Makes image position
+            .rotationEffect(.degrees(rotation), anchor: .topTrailing)                               // Sets rotation effect and anchor point
+            .animation(.interpolatingSpring(stiffness: 5, damping: 10, initialVelocity: 10))        // Animates the rotation, adding spring effect
+            .onTapGesture (count:1){                                                                // On tap, run this code...
+                self.rotation -= 22                                                                 // Rotate 22 degrees back
+                let seconds = 0.1                                                                   // Wait 0.1 seconds
+                DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {                         // Wait 0.1 seconds
+                self.rotation += 22                                                                 // Rotate 22 degrees forward
                 }
+                
+                globalVariables.breakState += 1                                                     // Adds 1 to state of block break
                 breakProgress()
-                globalVariables.breakState += 1
         }
     }
 }
 
+
 func breakProgress() {
     switch globalVariables.breakState {
-    case 0:
-        globalVariables.breakPNG = "breakblock1"
-        print ("Empty")
     case 1:
         globalVariables.breakPNG = "breakblock1"
         print("1")
@@ -67,14 +66,15 @@ func breakProgress() {
         globalVariables.breakPNG = "breakblock6"
         print("6")
     default:
+        globalVariables.breakPNG = "breakblock0"
         globalVariables.breakState = 0
-        print("Break!")
+        print("0")
     }
 }
 
-struct breakOverlay : View {
+struct breakOverlay : View {                                                                        // Draws block breaking effect
     var body: some View {
-        Image(globalVariables.breakPNG!)
+        Image(globalVariables.breakPNG)                                                             // Chooses the image to draw
     }
 }
 
